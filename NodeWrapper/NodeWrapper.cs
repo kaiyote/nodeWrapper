@@ -13,16 +13,15 @@ namespace NodeWrapper
 
     public class NodeWrapper
     {
-        public Task<object> openRepository(string path)
+        public Repository openRepository(string path)
         {
-            var repo = new Repository(path);
-            return Startup.ConvertObjectToInvokableMap(repo);
+            return new Repository(path);
         }
     }
 
     public class Startup
     {
-        private const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.InvokeMethod;
+        private const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly;
 
         public Task<object> Invoke(object input)
         {
@@ -38,10 +37,13 @@ namespace NodeWrapper
             var methods = methodInfos.ToDictionary(method =>
                 {
                     var methodsWithName = methodInfos.Where(methodInfo => methodInfo.Name == method.Name).ToList();
-                    return method.Name + (methodsWithName.IndexOf(method) == 0 ? "" : methodsWithName.IndexOf(method).ToString());
+                    return method.Name[0].ToString().ToLower() + string.Join("", method.Name.Skip(1).Take(method.Name.Length - 1)) + (methodsWithName.IndexOf(method) == 0 ? "" : methodsWithName.IndexOf(method).ToString());
                 }, method =>
                     (NodeFunction) (args =>
-                        Task.FromResult(type.InvokeMember(method.Name, bindingFlags, null, target, (object[]) args))));
+                    {
+                        var result = type.InvokeMember(method.Name, bindingFlags, null, target, (object[]) args);
+                        return result.GetType().IsValueType ? Task.FromResult(result) : ConvertObjectToInvokableMap(result);
+                    }));
 
             return Task.FromResult<object>(methods);
         }
