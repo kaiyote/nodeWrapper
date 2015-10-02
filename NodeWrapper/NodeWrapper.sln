@@ -1,9 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeWrapper", "NodeWrapper.csproj", "{CD90AAA1-6C50-4A1F-BECF-5EE4AB71A346}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8AAD4F1F-93D2-401D-9CF3-DDC37254E8F0}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeWrapperTests", "..\NodeWrapperTests\NodeWrapperTests.csproj", "{FBF6CAE3-8DC8-4380-AB95-E70442F8D91E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +24,10 @@ Global
 		{CD90AAA1-6C50-4A1F-BECF-5EE4AB71A346}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD90AAA1-6C50-4A1F-BECF-5EE4AB71A346}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD90AAA1-6C50-4A1F-BECF-5EE4AB71A346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF6CAE3-8DC8-4380-AB95-E70442F8D91E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF6CAE3-8DC8-4380-AB95-E70442F8D91E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF6CAE3-8DC8-4380-AB95-E70442F8D91E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF6CAE3-8DC8-4380-AB95-E70442F8D91E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
