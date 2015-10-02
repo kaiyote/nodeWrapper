@@ -1,0 +1,22 @@
+{
+  "name": "nodeWrapper",
+  "version": "0.0.1",
+  "description": "A wrapper around LibGit2Sharp for NodeJS/Edge, cause I can never seem to manage to build a native node module on Windows.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaiyote/nodeWrapper"
+  },
+  "author": "Tim Huddle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaiyote/nodeWrapper/issues"
+  },
+  "homepage": "https://github.com/kaiyote/nodeWrapper",
+  "dependencies": {
+    "edge": "^4.0.0"
+  }
+}
