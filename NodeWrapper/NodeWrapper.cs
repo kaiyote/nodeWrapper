@@ -12,10 +12,9 @@ namespace NodeWrapper
 
     public class Startup
     {
-        private const BindingFlags BindingFlags =
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static |
-            System.Reflection.BindingFlags.FlattenHierarchy;
+        private const BindingFlags bindingFlags =
+            BindingFlags.Instance | BindingFlags.Public |
+            BindingFlags.InvokeMethod | BindingFlags.FlattenHierarchy;
 
         public Task<object> Invoke(Envelope input)
         {
@@ -23,10 +22,15 @@ namespace NodeWrapper
             return ConvertObjectToInvokableMap(repository);
         }
 
-        private static Task<object> ConvertObjectToInvokableMap(object target)
+        public static Task<object> ConvertObjectToInvokableMap(object target)
         {
+            if (target is IEnumerable<object>)
+            {
+                return Task.FromResult<object>(target);
+            }
+
             var type = target.GetType();
-            var methodInfos = type.GetMethods(BindingFlags);
+            var methodInfos = type.GetMethods(bindingFlags);
             var extensionMethodInfos = type.GetExtensionMethods(type.Assembly);
 
             var methods = methodInfos.ToDictionary(method =>
@@ -38,7 +42,7 @@ namespace NodeWrapper
             }, method =>
                 (NodeFunction) (args =>
                 {
-                    var result = method.Invoke(target, BindingFlags, null, (object[]) args, null);
+                    var result = method.Invoke(target, bindingFlags, null, (object[]) args, null);
                     return result.GetType().IsValueType || result.GetType().IsActuallyValueType()
                         ? Task.FromResult(result)
                         : ConvertObjectToInvokableMap(result);
@@ -51,14 +55,14 @@ namespace NodeWrapper
                 var fullName = myMethod.GetParameters()
                     .Aggregate(baseName,
                         (name, next) => String.Format("{0}_{1}", name, next.ParameterType.Name.ToLower()));
-                methods.Add(fullName, (args =>
+                methods.Add(fullName, args =>
                 {
-                    var fullArgs = new[] {target}.Concat((object[]) args).ToArray();
-                    var result = myMethod.Invoke(null, BindingFlags, null, fullArgs, null);
+                    var fullArgs = new[] { target }.Concat((object[]) args).ToArray();
+                    var result = myMethod.Invoke(null, bindingFlags, null, fullArgs, null);
                     return result.GetType().IsValueType || result.GetType().IsActuallyValueType()
                         ? Task.FromResult(result)
                         : ConvertObjectToInvokableMap(result);
-                }));
+                });
             }
 
             return Task.FromResult<object>(methods);
@@ -86,9 +90,11 @@ namespace NodeWrapper
         {
             var methods = extensionAssembly.GetTypes().SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic));
 
-            return methods.Where(m => 
-                m.GetParameters().Length > 0 && (m.GetParameters()[0].ParameterType == t || t.GetInterfaces().Contains(m.GetParameters()[0].ParameterType))
-            ).ToArray();
+            return methods.Where(m =>
+            {
+                var parms = m.GetParameters();
+                return parms.Length > 0 && (parms[0].ParameterType == t || parms[0].ParameterType == t.BaseType || t.GetInterfaces().Contains(parms[0].ParameterType));
+            }).ToArray();
         }
     }
 }
