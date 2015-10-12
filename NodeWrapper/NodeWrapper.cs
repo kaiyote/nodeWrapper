@@ -26,7 +26,7 @@ namespace NodeWrapper
         {
             if (target is IEnumerable<object>)
             {
-                return Task.FromResult<object>(target);
+                return Task.FromResult(target);
             }
 
             var type = target.GetType();

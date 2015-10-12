@@ -9,7 +9,6 @@ using System;
 namespace NodeWrapperTests
 {
     using NodeFunction = Func<object, Task<object>>;
-    using System.Diagnostics;
 
     [TestClass]
     public class NodeWrapperTests
